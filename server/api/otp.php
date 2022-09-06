@@ -11,36 +11,44 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // Load and initialize database class
 require_once './db.class.php';
-require '../vendor/autoload.php';
+require_once('../vendor/autoload.php');
 use Firebase\JWT\JWT;
 use Twilio\Rest\Client;
 
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable('../', '.env');
+$dotenv->load();
 
 $data = json_decode(file_get_contents("php://input"));
 
 $mobile = $data->mobile;
 $otp = $data->otp;
 
+$secret = getenv('SECRET_KEY');
+$token_secret = getenv('TOKEN_SECRET');
+$serverName = getenv('SEVERNAME');
+$sid = getenv('SID');
+$issuer = getenv('ISSUER');
 $db = new DB();
 
 $statusMsg = $receipient_no = '';
 $otpDisplay = $verified = 0;
 
 // If mobile number submitted by the user
-if (isset($mobile)) {
+if (isset($mobile) && empty($otp)) {
     if (!empty($mobile)) {
         // Recipient mobile number
         $recipient_no = $mobile;
 
         // Generate random verification code
         $rand_no = rand(10000, 99999);
-        echo json_encode(array("message" => "Rand No set."));
+        echo json_encode(array("message" => "Rand No set.", "secc" => $sid));
         // Check previous entry
         $conditions = array(
             'mobile_number' => $recipient_no,
         );
         $checkPrev = $db->checkRow($conditions);
         echo json_encode(array("message" => "Checking...."));
+        echo json_encode(array("message" => "Checking...." . $checkPrev));
         // Insert or update otp in the database
         if ($checkPrev) {
             echo json_encode(array("message" => "Mobile exist"));
@@ -65,8 +73,8 @@ if (isset($mobile)) {
 
 
             // Your Account SID and Auth Token from twilio.com/console
-            $account_sid = 'AC80c536d1280e654dd5338508d4e25394';
-            $auth_token = '3c3f14f77446899013766bea77fdf6fb';
+            $account_sid = $sid;
+            $auth_token = $secret;
             // In production, these should be environment variables. E.g.:
             // $auth_token = $_ENV["TWILIO_AUTH_TOKEN"]
 
@@ -101,14 +109,14 @@ if (isset($mobile)) {
     $recipient_no = $mobile;
     if (!empty($otp)) {
         $otp_code = $otp;
-
+    
         // Verify otp code
         $conditions = array(
             'mobile_number' => $recipient_no,
             'verification_code' => $otp_code
         );
         $check = $db->checkRow($conditions);
-
+        echo json_encode(array("checked" =>  $check));
         if ($check) {
             $otpData = array(
                 'verified' => 1
@@ -120,7 +128,7 @@ if (isset($mobile)) {
                 'msg' => 'Thank you! Your phone number has been verified.'
             );
 
-            $secret_key = $secret;
+            $secret_key = $token_secret;
             $issuer_claim = $issuer; // this can be the servername
             $audience_claim = $serverName;
             $issuedat_claim = time(); // issued at

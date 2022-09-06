@@ -37,6 +37,11 @@
       - mysql
     networks:
       - default
+    environment:
+      - SECRET=${SECRET}
+      - SID=${SID}
+      - ISSUER=${ISSUER}
+      - SERVERNAME=${SERVERNAME}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

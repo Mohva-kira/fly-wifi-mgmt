@@ -42,10 +42,9 @@ class DB{
                 $i++;
             }
         }
-       
-        $result = $this->db->query($sql);
-        echo json_encode(array("message" => "condition", $result->num_rows));
-        return !empty($result->num_rows > 0)?true:false;
+        $result =$this->db->query($sql);
+        echo json_encode(array("message" => "Row found", $result->rowCount()));
+        return !empty($result->rowCount() > 0)?true:false;
     }
     
     /*

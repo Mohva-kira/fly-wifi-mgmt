@@ -5,15 +5,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import Login from './components/login/Login';
 import Register from './components/Register';
 import { Routes, Route, Link } from "react-router-dom";
+import Dashboard from './pages/dashboard/Dashboard';
 
 function App() {
   return (
     <div className="App">
        
-       <h1>Welcome to FLY WIFI</h1>
+    
       <Routes>
         <Route path="/" element={<Register />} />
         <Route path="login" element={<Login />} />
+        <Route path="dashboard" element={<Dashboard />} />
       </Routes>  
     </div>
   );

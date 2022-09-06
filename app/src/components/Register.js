@@ -48,7 +48,7 @@ const Register = () => {
             console.log('ouii')
                 setSuccessful(true)
                 
-                navigate('/login')
+                navigate(`/login`, {state: {mobile: mobile}})
            
     }
     return (
@@ -62,7 +62,7 @@ const Register = () => {
                         <div>
                             <section className="vh-100">
                                 <div className="container py-5 h-100">
-                                <h1> FLY WIFI </h1>
+                                <h1> </h1>
                                 <>{console.log('yahhh')}</>
                                     <div className="row d-flex align-items-center justify-content-center h-100">
                                            
